@@ -9,6 +9,9 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
+import { ApolloProvider } from '@apollo/react-hooks';
+import { client } from './src/graphql/Client';
+
 import SideDrawerNavigation from './navigation/SideDrawerNavigation'
 import TopTabNavigation from './navigation/TopTabNavigation'
 import useLinking from './navigation/useLinking';
@@ -66,6 +69,7 @@ export default function App(props) {
     return null;
   } else {
   return (
+    <ApolloProvider client={client}>
     <PaperProvider theme={theme}>
     <SafeAreaProvider style={styles.container}>
       <NavigationContainer ref={containerRef} initialState={initialNavigationState}>
@@ -75,6 +79,7 @@ export default function App(props) {
       </NavigationContainer>
     </SafeAreaProvider>
     </PaperProvider>
+    </ApolloProvider>
   );
 }
 }
