@@ -1,112 +1,48 @@
 import React, {Component, useEffect} from 'react';
+import { StyleSheet, View, Image, Text, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 //import VariantSelector from './VariantSelector';
-import { Avatar, Title, Button, Caption, Paragraph, Text, TouchableRipple, Switch, Card } from 'react-native-paper';
+import { Avatar, Title, Button, Caption, Paragraph, TouchableRipple, Switch, Card } from 'react-native-paper';
+import Layout from '../constants/Layout'
+import Colors  from '../constants/Colors';
 
 export default function Product(props) {
-
-    // let variantImage = this.state.selectedVariantImage || this.props.product.images[0].src
-    // let variant = this.state.selectedVariant || this.props.product.variants[0]
-    // let variantQuantity = this.state.selectedVariantQuantity || 1
-    let variantImage = props.product.images[0].src
-    let variant = props.product.variants[0]
-    let variantQuantity = 1
-
+    console.log(props.item)
     return (
-        <Card>
-            <Card.Title title="Card Title" subtitle="Card Subtitle" left={LeftContent} />
+        <Card style={styles.block}>
+            <Card.Cover source={{ uri: props.image }} style={styles.productImage} />
             <Card.Content>
-            <Title>{props.product.title}</Title>
-            <Paragraph>Card content</Paragraph>
+                <Title style={styles.title} numberOfLines={1}>{props.title}</Title>
             </Card.Content>
-            {props.product.images.length ? <img src={variantImage} alt={`${props.product.title} product shot`}/> : null}
-            <Card.Cover source={{ uri: variantImage }} />
             <Card.Actions>
-            <Button>${variant.price}</Button>
-            <Button onClick={() => props.addVariantToCart(variant.id, variantQuantity)}>Add to Cart</Button>
+            <Button>${props.price}</Button>
+            <TouchableOpacity>
+                <Button mode="contained" onClick={() => {}} color={Colors.productMore}>More</Button>
+            </TouchableOpacity>
             </Card.Actions>
         </Card>
       );
-    
 }
-// class Product extends Component {
-//   constructor(props) {
-//     super(props);
 
-//     this.state = {};
-
-//     this.handleOptionChange = this.handleOptionChange.bind(this);
-//     this.handleQuantityChange = this.handleQuantityChange.bind(this);
-//     this.findImage = this.findImage.bind(this);
-//   }
-
-//   componentWillMount() {
-//     this.props.product.options.forEach((selector) => {
-//       this.setState({
-//         selectedOptions: { [selector.name]: selector.values[0].value }
-//       });
-//     });
-//   }
-
-//   findImage(images, variantId) {
-//     const primary = images[0];
-
-//     const image = images.filter(function (image) {
-//       return image.variant_ids.includes(variantId);
-//     })[0];
-
-//     return (image || primary).src;
-//   }
-
-//   handleOptionChange(event) {
-//     const target = event.target
-//     let selectedOptions = this.state.selectedOptions;
-//     selectedOptions[target.name] = target.value;
-
-//     const selectedVariant = this.props.product.variants.find((variant) => {
-//       return variant.selectedOptions.every((selectedOption) => {
-//         return selectedOptions[selectedOption.name] === selectedOption.value.valueOf();
-//       });
-//     });
-
-//     this.setState({
-//       selectedVariant: selectedVariant,
-//       selectedVariantImage: selectedVariant.attrs.image.src
-//     });
-//   }
-
-//   handleQuantityChange(event) {
-//     this.setState({
-//       selectedVariantQuantity: event.target.value
-//     });
-//   }
-
-//   render() {
-//     let variantImage = this.state.selectedVariantImage || this.props.product.images[0].src
-//     let variant = this.state.selectedVariant || this.props.product.variants[0]
-//     let variantQuantity = this.state.selectedVariantQuantity || 1
-//     // let variantSelectors = this.props.product.options.map((option) => {
-//     //   return (
-//     //     <VariantSelector
-//     //       handleOptionChange={this.handleOptionChange}
-//     //       key={option.id.toString()}
-//     //       option={option}
-//     //     />
-//     //   );
-//     // });
-//     return (
-//       <div className="Product">
-//         {this.props.product.images.length ? <img src={variantImage} alt={`${this.props.product.title} product shot`}/> : null}
-//         <h5 className="Product__title">{this.props.product.title}</h5>
-//         <span className="Product__price">${variant.price}</span>
-//         {/* {variantSelectors} */}
-//         <label className="Product__option">
-//           Quantity
-//           <input min="1" type="number" defaultValue={variantQuantity} onChange={this.handleQuantityChange}></input>
-//         </label>
-//         <button className="Product__buy button" onClick={() => this.props.addVariantToCart(variant.id, variantQuantity)}>Add to Cart</button>
-//       </div>
-//     );
-//   }
-// }
-
-//export default Product;
+const styles = StyleSheet.create({
+    title: {
+      fontFamily: 'maven-pro-bold',
+      fontSize: Layout.window.width / 26,
+      color: '#252525'
+    },
+    subtitle: {
+      fontFamily: 'maven-pro-bold',
+      fontSize: Layout.window.width / 48,
+      color: '#bf200b'
+    },
+    block: {
+      flex: 1,
+      height: Layout.window.height / 4,
+      margin: Layout.window.width / 40
+    },
+    productImage: {
+      maxWidth: '90%',
+      maxHeight: Layout.window.height / 8,
+      backgroundColor: '#ffffff'
+    },
+  });
+  

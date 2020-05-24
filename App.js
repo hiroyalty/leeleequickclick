@@ -5,15 +5,12 @@ import { SplashScreen } from 'expo';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons,FontAwesome, Feather } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, HeaderTitle } from '@react-navigation/stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
 import { ApolloProvider } from '@apollo/react-hooks';
 import { client } from './src/graphql/Client';
-
 import SideDrawerNavigation from './navigation/SideDrawerNavigation'
-import TopTabNavigation from './navigation/TopTabNavigation'
 import useLinking from './navigation/useLinking';
 
 //const Drawer = createDrawerNavigator();
@@ -52,6 +49,8 @@ export default function App(props) {
           ...FontAwesome.font,
           ...Feather.font,
           'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+          'maven-pro-regular': require('./assets/fonts/MavenPro-Regular.ttf'),
+          'maven-pro-bold': require('./assets/fonts/MavenPro-Bold.ttf')
         });
       } catch (e) {
         // We might want to provide this error information to an error reporting service

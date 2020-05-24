@@ -30,7 +30,7 @@ const toggleTheme = () => {
               </View>
             </View>
 
-            <View style={styles.row}>
+            {/* <View style={styles.row}>
               <View style={styles.section}>
                 <Paragraph style={[styles.paragraph, styles.caption]}>80</Paragraph>
                 <Caption style={styles.caption}>Following</Caption>
@@ -39,7 +39,7 @@ const toggleTheme = () => {
                 <Paragraph style={[styles.paragraph, styles.caption]}>100</Paragraph>
                 <Caption style={styles.caption}>Followers</Caption>
               </View>
-            </View>
+            </View> */}
           </View>
 
           <Drawer.Section style={styles.drawerSection}>
@@ -52,17 +52,17 @@ const toggleTheme = () => {
             />
             <DrawerItem 
               icon={({}) => (
+                <SideDrawerIcon Icon={MaterialCommunityIcons} name="border-none" />
+              )} 
+              label="Orders"
+              onPress={() => {}}
+            />
+            <DrawerItem 
+              icon={({}) => (
                 <SideDrawerIcon Icon={MaterialCommunityIcons} name="account-outline" />
               )} 
               label="Profile"
               onPress={() => {props.navigation.navigate('Profile')}} 
-            />
-            <DrawerItem 
-              icon={({}) => (
-                <SideDrawerIcon Icon={MaterialCommunityIcons} name="bookmark-outline" />
-              )} 
-              label="Bookmarks"
-              onPress={() => {}} 
             />
             <DrawerItem 
               icon={({}) => (

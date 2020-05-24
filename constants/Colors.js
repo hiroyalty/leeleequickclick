@@ -14,5 +14,6 @@ export default {
   noticeText: '#fff',
   blackIcon: '#000000',
   myWhite: '#fff',
-  mainColor
+  mainColor,
+  productMore: '#FF2400'
 };
