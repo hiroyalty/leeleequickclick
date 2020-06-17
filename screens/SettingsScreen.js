@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Appbar, Avatar, Title, Divider, Caption, Paragraph, Drawer, Text, TouchableRipple, Switch } from 'react-native-paper';
 
 export default function SettingsScreen({ navigation }) {
+
     return (
         <SafeAreaView>
             <View>

@@ -4,40 +4,88 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 //import { MaterialCommunityIcons, FontAwesome, Feather, Ionicons } from '@expo/vector-icons'; 
 import { Appbar, ActivityIndicator, Searchbar } from 'react-native-paper';
 
-import Layout from '../constants/Layout';
 import Colors from '../constants/Colors';
-import SideDrawerIcon from '../components/SideDrawerIcon';
 import Product from '../components/Product';
 import { useQuery } from '@apollo/react-hooks';
 import { client } from '../src/graphql/Client'
 import { SHOP, PRODUCTS } from '../src/graphql/Queries'
 
 export default function HomeScreen({ navigation }) {
-    //const { loading, error, data } = useQuery(PRODUCTS); data.shop.products.edges
+    //const { loading, error, data } = useQuery(PRODUCTS); //data.shop.products.edges
+    const productSize = 8;
     const [ShopInfo, setShopInfo] = useState('')
-    const [productListing, setProductListing] = useState('')
+    const [productListing, setProductListing] = useState([])
     const [load, setLoad] = useState(true)
     const [myError, setMyError] = useState(false)
-    useEffect(() => {
-        requestShopInfo()
-    },[]) 
+    const [cursor, setCursor] = useState('')
+    const [nextPage, setNextPage] = useState(true)
+    const [page, setPage] = useState(1)
+    // useEffect(() => {
+    //     requestShopInfo()
+    // },[]) 
 
     async function requestShopInfo() {
-        setLoad(true)
-        client.query({
-            query: PRODUCTS
-        })
-        .then(response => {
+        //setLoad(true)
+        if(nextPage) {
+        console.log('Is there next page ' + nextPage)
+        if(cursor) {
+            console.log('cursor is ' + cursor)
+            client.query({
+                query: PRODUCTS,
+                variables: {
+                    productSize,
+                    cursor
+                }
+            })
+            .then(response => {
+                setLoad(false)
+                setNextPage(response.data.products.pageInfo.hasNextPage)
+                //console.log('RESPONSE ==>', response.data.shop.products.edges)
+                //feed: previousResult.feed.concat(fetchMoreResult.feed),
+                //setProductListing( ...prevProductListingState => prevProductListingState.concat(response.data.shop.products.edges))
+                setProductListing( productListing.concat(response.data.products.edges))
+                //setProductListing(productListing => [...productListing, response.data.shop.products.edges])
+            })
+            .catch(error => {
+            setMyError(true)
             setLoad(false)
-            //console.log('RESPONSE ==>', response.data.shop.products.edges)
-            setProductListing(response.data.shop.products.edges)
-        })
-        .catch(error => {
-        setMyError(true)
-        setLoad(false)
-        console.log('ERROR ==>', error)
-        })
+            console.log('ERROR ==>', error)
+            })
+        } else {
+            client.query({
+                query: PRODUCTS,
+                variables: {
+                    productSize
+                }
+            })
+            .then(response => {
+                setLoad(false)
+                //console.log('RESPONSE ==>', response.data.shop.products.edges)
+                setProductListing(response.data.products.edges)
+            })
+            .catch(error => {
+            setMyError(true)
+            setLoad(false)
+            console.log('ERROR ==>', error)
+            })
+        }
+    } 
     }
+
+    function renderRow({item}) {
+        return(
+            <Product 
+                 title={item.node.title} 
+                 image={item.node.variants.edges[0].node.image.transformedSrc} 
+                 price={item.node.variants.edges[0].node.priceV2.amount} 
+            />
+        )
+    }
+    function handleMore() {
+        console.warn('you trying to load more ' + cursor)
+        requestShopInfo()
+    }
+
     return (
         <SafeAreaView style={styles.container}>
         <View>
@@ -48,17 +96,19 @@ export default function HomeScreen({ navigation }) {
         </Appbar>
         </View>
         <View>
-            { load ?    
-                <ActivityIndicator animating={true} color={Colors.tintColor} />
-             : <FlatList
-             style={styles.list}
+            { load ? <ActivityIndicator animating={true} color={Colors.tintColor} style={styles.list} />  : <FlatList
              data={productListing}
-             renderItem={({ item }) => <Product 
-                 title={item.node.title} 
-                 image={item.node.variants.edges[0].node.image.src} 
-                 price={item.node.variants.edges[0].node.price } 
-                 productDetails={item.node} />}
+             style={styles.list}
              numColumns={2}
+             renderItem={renderRow}
+             keyExtractor={item => item.cursor}
+             onEndReachedThreshold={1}
+            //  onEndReached={() => {
+            //     setCursor(productListing[productListing.length - 1].cursor)
+            //     console.log('onReach End '+ cursor)
+            //     //handleMore()
+            //     requestShopInfo()
+            //  }}
          /> }
         </View>
         </SafeAreaView>
@@ -85,8 +135,8 @@ const styles = StyleSheet.create({
       backgroundColor: '#FFF'
     },
     list: {
-        marginTop: Layout.window.height * 0.09,
-      },
-    
+        marginTop: 60,
+        marginVertical: 20
+    },
 });
   

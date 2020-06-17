@@ -5,29 +5,18 @@ query {
     shop {
       name
       description
-      products(first:5) {
-        edges {
-          node {
-            id
-            title 
-          }
-        }
-      }
-      
     }
 }
 `
 export const PRODUCTS = gql`
-query {
-  shop {
-    name
-    description
-    products(first:20) {
+query ($productSize: Int!, $cursor: String){
+    products(first: $productSize, after: $cursor) {
       pageInfo {
         hasNextPage
         hasPreviousPage
       }
       edges {
+        cursor
         node {
           id
           title
@@ -48,9 +37,11 @@ query {
                   value
                 }
                 image {
-                  src
+                  transformedSrc 
                 }
-                price
+                priceV2 {
+                  amount
+                }
               }
             }
           }
@@ -68,6 +59,5 @@ query {
         }
       }
     }
-  }
 }
 `
