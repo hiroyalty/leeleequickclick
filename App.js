@@ -3,18 +3,29 @@ import { StyleSheet, View } from 'react-native';
 import * as Font from 'expo-font';
 import { SplashScreen } from 'expo';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons,FontAwesome, Feather } from '@expo/vector-icons';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator, HeaderTitle } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
 import { ApolloProvider } from '@apollo/react-hooks';
 import { client } from './src/graphql/Client';
+import { createStore, combineReducers } from 'redux';
+//import { Provider } from 'react-redux';
+//import productsReducer from './src/store/reducers/products'
+
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator, HeaderTitle } from '@react-navigation/stack';
 import SideDrawerNavigation from './navigation/SideDrawerNavigation'
 import useLinking from './navigation/useLinking';
 
 //const Drawer = createDrawerNavigator();
-const Stack = createStackNavigator();
+const Stack = createStackNavigator(); 
+
+// const rootReducer = combineReducers({
+//   products: productsReducer
+// })
+
+//const store = createStore(rootReducer)
 
 const theme = {
   ...DefaultTheme,

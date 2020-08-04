@@ -3,9 +3,13 @@ import { View, Image, StyleSheet } from 'react-native'
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Appbar, Avatar, Title, Divider, Caption, Paragraph, Drawer, Text, TouchableRipple, Switch } from 'react-native-paper';
+import InfiniteLoadingList from 'react-simple-infinite-loading'
 
 import TabBarIcon from '../components/TabBarIcon';
 import Layout from '../constants/Layout';
+
+import useProducts from '../src/shared/useProducts'
+import Product from '../components/Product';
 
 const Social = ({ name }) => (
   <TabBarIcon
@@ -19,6 +23,10 @@ const Social = ({ name }) => (
 )
 
 export default function ProfileScreen({ navigation }) {
+  const { products, loading, loadMore, hasNextPage } = useProducts()
+
+  const loadMoreProducts = loading ? () => {} : loadMore
+  const isProductLoaded = index => !hasNextPage || index < products.length
     return (
       <SafeAreaView>
         <View>
@@ -28,6 +36,42 @@ export default function ProfileScreen({ navigation }) {
             <Appbar.Action  icon="cart" onPress={() => console.log('Pressed delete')} />
         </Appbar>
         </View>
+
+        <View className="InfiniteList-list">
+      <InfiniteLoadingList
+        items={products}
+        itemHeight={40}
+        hasMoreItems={hasNextPage}
+        loadMoreItems={loadMoreproducts}
+      >
+         {({ item: product, index, style }) => {
+          let content
+          if (!isProductLoaded(index)) {
+            content = 'Loading...'
+          } else {
+            //const { firstname, lastname } = product
+            content =  <Product 
+                    key={product.node.id}
+                    title={product.node.title} 
+                    image={product.node.images.edges[0].node.transformedSrc}
+                    price={product.node.variants.edges[0].node.priceV2.amount}/> 
+          }
+
+          return <View>{content}</View>
+
+      {/*<div style={{ width: 300, height: 300 }}>
+       <InfiniteLoading
+        hasMoreItems={hasMore}
+        itemHeight={40}
+        loadMoreItems={fetchMore}
+      >
+        {items.map(item => <div key={item}>{item}</div>)}
+      </InfiniteLoading> 
+    </div> */}
+        }}
+      </InfiniteLoadingList>
+    </View>
+
       </SafeAreaView>
     //     <Container>
     //         <Header>

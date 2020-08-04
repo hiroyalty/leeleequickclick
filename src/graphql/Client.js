@@ -2,7 +2,6 @@ import { ApolloClient } from 'apollo-boost'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 //import Client from 'graphql-js-client'
-//import typeBundle from '../../types'
 
 // export const client = new Client(typeBundle, {
 //   url: 'https://lee-lees-quick-click.myshopify.com/api/2020-04/graphql.json',

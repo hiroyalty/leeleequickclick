@@ -5,6 +5,36 @@ import { Appbar, Avatar, Title, Divider, Caption, Paragraph, Drawer, Text, Touch
 
 export default function SettingsScreen({ navigation }) {
 
+    // const loadMore = () => {
+    //     return fetchMore({
+    //       query: GET_PERSONS,
+    //       notifyOnNetworkStatusChange: true,
+    //       variables: {
+    //         cursor: data.persons.pageInfo.endCursor,
+    //       },
+    //       updateQuery: (previousResult, {fetchMoreResult}) => {
+    //         const newEdges = fetchMoreResult.persons.edges;
+    //         const pageInfo = fetchMoreResult.persons.pageInfo;
+    //         return newEdges.length
+    //           ? {
+    //               persons: {
+    //                 __typename: previousResult.persons.__typename,
+    //                 edges: [...previousResult.persons.edges, ...newEdges],
+    //                 pageInfo,
+    //               },
+    //             }
+    //           : previousResult;
+    //       },
+    //     });
+    //   };
+    //   return {
+    //     persons: data.persons.edges.map(({node}) => node),
+    //     hasNextPage: data.persons.pageInfo.hasNextPage,
+    //     loading,
+    //     loadMore,
+    //   };
+    // }
+
     return (
         <SafeAreaView>
             <View>

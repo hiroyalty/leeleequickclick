@@ -12,82 +12,42 @@ import { SHOP, PRODUCTS } from '../src/graphql/Queries'
 
 export default function HomeScreen({ navigation }) {
     //const { loading, error, data } = useQuery(PRODUCTS); //data.shop.products.edges
-    const productSize = 8;
-    const [ShopInfo, setShopInfo] = useState('')
-    const [productListing, setProductListing] = useState([])
-    const [load, setLoad] = useState(true)
-    const [myError, setMyError] = useState(false)
-    const [cursor, setCursor] = useState('')
-    const [nextPage, setNextPage] = useState(true)
-    const [page, setPage] = useState(1)
-    // useEffect(() => {
-    //     requestShopInfo()
-    // },[]) 
+    const productSize = 20;
+    const { data, loading, error, fetchMore } = useQuery(PRODUCTS, {
+        variables: { productSize }
+    });
 
-    async function requestShopInfo() {
-        //setLoad(true)
-        if(nextPage) {
-        console.log('Is there next page ' + nextPage)
-        if(cursor) {
-            console.log('cursor is ' + cursor)
-            client.query({
-                query: PRODUCTS,
-                variables: {
-                    productSize,
-                    cursor
-                }
-            })
-            .then(response => {
-                setLoad(false)
-                setNextPage(response.data.products.pageInfo.hasNextPage)
-                //console.log('RESPONSE ==>', response.data.shop.products.edges)
-                //feed: previousResult.feed.concat(fetchMoreResult.feed),
-                //setProductListing( ...prevProductListingState => prevProductListingState.concat(response.data.shop.products.edges))
-                setProductListing( productListing.concat(response.data.products.edges))
-                //setProductListing(productListing => [...productListing, response.data.shop.products.edges])
-            })
-            .catch(error => {
-            setMyError(true)
-            setLoad(false)
-            console.log('ERROR ==>', error)
-            })
-        } else {
-            client.query({
-                query: PRODUCTS,
-                variables: {
-                    productSize
-                }
-            })
-            .then(response => {
-                setLoad(false)
-                //console.log('RESPONSE ==>', response.data.shop.products.edges)
-                setProductListing(response.data.products.edges)
-            })
-            .catch(error => {
-            setMyError(true)
-            setLoad(false)
-            console.log('ERROR ==>', error)
-            })
-        }
-    } 
+    if (error) {
+        console.log('Response error-----', error)
+        {errorComponent}
     }
-
+    const errorComponent = () => {
+        return (
+            <SafeAreaView style={styles.container}>
+        <View>
+        <Appbar style={styles.top}>
+            <Appbar.Action icon="menu" onPress={() => navigation.openDrawer()} />
+            <Searchbar style={styles.searchFeild} placeholder="Search"  />
+            <Appbar.Action  icon="cart" onPress={() => console.log('Pressed delete')} />
+        </Appbar>
+        </View>
+         <View>
+            <HelperText type="error" style={styles.listing}>There is an error</HelperText>
+         </View>
+         </SafeAreaView>
+        )
+    }
     function renderRow({item}) {
         return(
             <Product 
-                 title={item.node.title} 
-                 image={item.node.variants.edges[0].node.image.transformedSrc} 
-                 price={item.node.variants.edges[0].node.priceV2.amount} 
+                    title={item.node.title} 
+                    image={item.node.variants.edges[0].node.image.transformedSrc} 
+                    price={item.node.variants.edges[0].node.priceV2.amount} 
             />
         )
     }
-    function handleMore() {
-        console.warn('you trying to load more ' + cursor)
-        requestShopInfo()
-    }
-
-    return (
-        <SafeAreaView style={styles.container}>
+        return (
+            <SafeAreaView style={styles.container}>
         <View>
         <Appbar style={styles.top}>
             <Appbar.Action icon="menu" onPress={() => navigation.openDrawer()} />
@@ -96,23 +56,51 @@ export default function HomeScreen({ navigation }) {
         </Appbar>
         </View>
         <View>
-            { load ? <ActivityIndicator animating={true} color={Colors.tintColor} style={styles.list} />  : <FlatList
-             data={productListing}
+        {/* { loading ? <ActivityIndicator animating={true} color={Colors.tintColor} style={styles.list} />  : 
+        <FlatList
+             data={data.products.edges || []}
              style={styles.list}
              numColumns={2}
              renderItem={renderRow}
              keyExtractor={item => item.cursor}
              onEndReachedThreshold={1}
-            //  onEndReached={() => {
-            //     setCursor(productListing[productListing.length - 1].cursor)
-            //     console.log('onReach End '+ cursor)
-            //     //handleMore()
-            //     requestShopInfo()
-            //  }}
-         /> }
+             onEndReached={() => {
+                 if(data.products.pageInfo.hasNextPage) {
+             fetchMore({
+             // note this is a different query than the one used in the
+             // Query component
+             query: PRODUCTS,
+             variables: { productSize, cursor: data.products.edges[data.products.edges.length - 1].cursor },
+             updateQuery: (previousResult, { fetchMoreResult }) => {
+                 console.log('previous result ', previousResult)
+                 console.log('More result ', fetchMoreResult)
+               const previousEntry = previousResult.products.edges;         //fetchMoreResult.products.edges
+               const newEdges = fetchMoreResult.products.edges;
+               const newPageInfo  = fetchMoreResult.products.pageInfo;
+   
+               return {
+                 // By returning `cursor` here, we update the `fetchMore` function
+                 // to the new cursor.
+                 //cursor: newCursor,
+                 products: {
+                   // Put the new comments in the front of the list
+                   __typename: previousResult.products.__typename,
+                   pageInfo: newPageInfo,
+                   edges: [...newEdges, ...previousEntry]
+                 },
+                 //__typename: previousEntry.__typename
+               };
+             }
+           }) }
+         }
+         }
+         />
+        } */}
         </View>
         </SafeAreaView>
-    )
+          
+        );
+      
 }
 
 const styles = StyleSheet.create({

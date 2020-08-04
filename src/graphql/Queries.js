@@ -24,7 +24,7 @@ query ($productSize: Int!, $cursor: String){
             name
             values
           }
-          variants(first: 250) {
+          variants(first: 50) {
             pageInfo {
               hasNextPage
               hasPreviousPage
@@ -45,14 +45,14 @@ query ($productSize: Int!, $cursor: String){
               }
             }
           }
-          images(first: 250) {
+          images(first: 50) {
             pageInfo {
               hasNextPage
               hasPreviousPage
             }
             edges {
               node {
-                src
+                transformedSrc
               }
             }
           }

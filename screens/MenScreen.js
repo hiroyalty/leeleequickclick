@@ -9,17 +9,19 @@ import { SHOP, PRODUCTS } from '../src/graphql/Queries'
 import Product from '../components/Product';
 
 export default function MenScreen({ navigation }) {
-    const productSize = 8
+    const productSize = 24
     const [cursor, setCursor] = React.useState('')
-    //const [loading, setLoading] = useState(true)
 
-    const { loading, error, data, fetchMore } = useQuery(PRODUCTS, {
+    const { loading, error, data, fetchMore, refetch } = useQuery(PRODUCTS, {
         variables: { productSize },
+        notifyOnNetworkStatusChange: true,
     });
-    //console.log(data)
     if (error) {
         console.log('Response error-----', error)
-        return  (
+        {errorComponent}
+    }
+    const errorComponent = () => {
+        return (
             <SafeAreaView style={styles.container}>
         <View>
         <Appbar style={styles.top}>
@@ -52,7 +54,7 @@ export default function MenScreen({ navigation }) {
         </View>
          <View>
              {
-                loading ? <ActivityIndicator animating={true} color={Colors.tintColor} style={styles.listing} /> : 
+                loading || !data.products ? <ActivityIndicator animating={true} color={Colors.tintColor} style={styles.listing} /> : 
             <FlatList
              data={data.products.edges || []}
              style={styles.listing}
@@ -62,43 +64,35 @@ export default function MenScreen({ navigation }) {
                 <Product 
                     key={item.node.id}
                     title={item.node.title} 
-                    image={item.node.variants.edges[0].node.image.transformedSrc} 
+                    image={item.node.variants.edges[0].node.image.transformedSrc} //{item.node.variants.edges[0].node.image.transformedSrc} {item.node.images.edges[0].node.transformedSrc}
                     price={item.node.variants.edges[0].node.priceV2.amount}/> }
              keyExtractor={item => item.node.id}
              numColumns={2}
              onEndReachedThreshold={1}
              onEndReached={() => {
-                let mycursor = data.products.edges[data.products.edges.length - 1].cursor
-                let myPageInfo = data.products.pageInfo
-                setCursor(mycursor)
-                console.log('MenScreen onReach End',mycursor)
                 fetchMore({
+                    query: PRODUCTS,
+                    notifyOnNetworkStatusChange: true,
                     variables: {
                     productSize,
-                    cursor: mycursor
+                    cursor: data.products.edges[data.products.edges.length - 1].cursor
                     },
-                    updateQuery: (prev, { fetchMoreResult }) => {
-                        //console.log('More result ',fetchMoreResult)
-                        //console.log('Previous result ',prev)
-                    if (!fetchMoreResult) return prev;
-                    //return Object.assign(prev, fetchMoreResult)
-                    //return Object.assign({}, prev, {
-                    //});
-                    // fetchMore({
-                    //     variables: { cursor: data.publications.pageInfo.endCursor },
-                    //     // query: QUERY,
-                    //     updateQuery: (previousResult, { fetchMoreResult }) => {
-                        //const result = words.filter(word => word.length > 6);
-                        const newProducts = fetchMoreResult.products.edges
-                        //const newProducts = fetchMoreResult.products.edges.filter(item => item.node.variants.edges[0].node.image.transformedSrc != null)
-                       return {
+                    updateQuery: (previousResult, { fetchMoreResult }) => {
+                        console.log(previousResult.products.edges[23])
+                        //console.log(fetchMoreResult.products.edges[1])
+                        const newEdges = fetchMoreResult.products.edges;
+                        const pageInfo = fetchMoreResult.products.pageInfo;
+            
+                        return newEdges.length
+                        ? {
+                        //const newProducts = fetchMoreResult.products.edges.filter(item => item.node.variants.edges[0].node.image.transformedSrc)
                         products: {
-                        __typename: prev.products.__typename,
-                        edges: [...prev.products.edges, ...newProducts],
-                        pageInfo: myPageInfo,
-                        },
-                       
-                    }
+                        __typename: previousResult.products.__typename,
+                        edges: [...previousResult.products.edges, ...newEdges],
+                        pageInfo,
+                        }
+                        }
+                        : previousResult;
                 }
                 })
                }
@@ -131,8 +125,11 @@ const styles = StyleSheet.create({
         marginTop: 60,
         marginVertical: 20
     },
-    list: {
-        marginTop: Layout.window.height * 0.04,
+    activityLoading: {
+        flex: 1,
+        marginVertical: 20,
+        justifyContent: "center", 
+        alignItems: "center"
     }
 });
   
